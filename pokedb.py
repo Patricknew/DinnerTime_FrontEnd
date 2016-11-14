@@ -349,16 +349,61 @@ def addStats():
 ############query############
 @app.route('/recommendation', methods=['POST'])
 def recommendation():
-	try:
-		PName = str(request.form['PName'])
-		return render_template('fancy.html', msg=PName)
-		# raw = g.conn.execute(query)
-		# result = ''
-		# for row in raw:
-		# 	result += str(row) + '\n'
-	except Exception, e:
-		print traceback.print_exc()
-		return 'Null'
+  try:
+    opponentName = str(request.form['PName'])
+    if len(opponentName) == 0:
+      return render_template('fancy.html', msg="Please tell me which Pokemon you want to battle with!")
+
+    queryID = "SELECT P.PID FROM Pokemon P WHERE P.PName=\'" + opponentName + "\'"
+    queryResult = g.conn.execute(queryID)
+    for row in queryResult:
+      opponentID = row[0]
+
+    queryType = "SELECT C.TyID FROM Categorize C WHERE C.PID=\'" + str(opponentID) + "\'"
+    typeResult = g.conn.execute(queryType)
+    opponentType = []
+    for row in typeResult:
+      opponentType.append(row[0])
+
+    weakness = ''
+    for TyID in opponentType:
+      queryWeakness = "SELECT T.TyWeakness FROM Type T WHERE T.TyID=\'" + str(TyID) + "\'"
+      weaknessResult = g.conn.execute(queryWeakness)
+      for row in weaknessResult:
+        weakness += row[0] + ", "
+    weak = str(weakness).split(", ")
+    weakset = list(set(weak[:-1]))
+
+    weakID = []
+    for w in weakset:
+      queryTypeID = "SELECT T.TyID FROM Type T WHERE T.TyName=\'" + w + "\'"
+      weaknessID = g.conn.execute(queryTypeID)
+      for row in weaknessID:
+        weakID.append(row[0])
+
+    recommend = []
+    for i in weakID:
+      queryPokemon = "SELECT C.PID FROM Categorize C WHERE C.TyID=\'" + str(i) + "\'"
+      pokemonResult = g.conn.execute(queryPokemon)
+      for row in pokemonResult:
+        recommend.append(row[0])
+    recommendPoke = list(set(recommend))
+
+    recommendPokeName = []
+    for p in recommendPoke:
+      queryPokeName = "SELECT P.PName FROM Pokemon P WHERE P.PID=\'" + str(p) + "\'"
+      nameResult = g.conn.execute(queryPokeName)
+      for row in nameResult:
+        recommendPokeName.append(str(row[0]))
+    print recommendPokeName
+
+    message = ''
+    for n in recommendPokeName:
+      message += n + ", "
+    return render_template('fancy.html', msg=message[:-2])
+  except Exception, e:
+    print traceback.print_exc()
+    return 'Invalid Input'
 
 if __name__ == "__main__":
   import click
