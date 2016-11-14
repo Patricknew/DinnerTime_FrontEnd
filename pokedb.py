@@ -237,6 +237,255 @@ def login():
     abort(401)
     this_is_never_executed()
 '''
+############search############
+@app.route('/searchpokemon')
+def searchpokemon():
+    try:
+        PID = str(request.args.get('PID'))
+        PName = str(request.args.get('PName'))
+        result=''
+        if len(PID) == 0 and len(PName) == 0:
+            return 'Please input PID or PName!'
+        if len(PID) == 0:
+            sexecute = "SELECT P.PID FROM Pokemon P WHERE P.PName=\'" + PName + "\'"
+            profiles = g.conn.execute(sexecute)
+            for profile in profiles:
+                PID=str(profile)[1]
+            if not PID:
+                return 'PName not in table!'
+        #profile
+        sexecute = "SELECT P.PID, P.PName, P.Pevolutionlvl FROM Pokemon P WHERE P.PID=\'" + PID + "\'"
+        profiles = g.conn.execute(sexecute)
+        for s in profiles:
+            if s[1]!=PName and len(PName)!= 0:
+                return 'PID and PName do not match!'
+            PName=s[1]
+            st = 'Pokemon ['+PName+"] Profile: <br>PID: "+PID +' Pevolutionlvl: '+str(s[2])+'<br>'
+            result +=st
+        result+=" --------------------------------------------- <br>"
+
+        #perform relationship
+        sexecute = "SELECT P.PID,P.MID FROM Perform P WHERE P.PID=\'" + PID + "\'"
+        owns = g.conn.execute(sexecute)
+        result = result + "Move performed by Pokemon: <br>"
+        for own in owns:
+            st='MID: '+str(own[1])+"<br>"
+            result = result + st
+        result+=" --------------------------------------------- <br>"
+
+        #categorize relationship
+        sexecute = "SELECT P.PID,P.TyID FROM categorize P WHERE P.PID=\'" + PID + "\'"
+        owns = g.conn.execute(sexecute)
+        result = result + "Categorize as Type: <br>"
+        for own in owns:
+            st='Type ID = '+str(own[1])+"<br>"
+            result = result + st
+        result+=" --------------------------------------------- <br>"
+
+        #posses relationship
+        sexecute = "SELECT P.PID,P.sattack,P.sspeed, P.shp, P.sdefense FROM posses_stats P WHERE P.PID=\'" + PID + "\'"
+        owns = g.conn.execute(sexecute)
+        result = result + "Possed status: <br>"
+        for own in owns:
+            st='Attack = '+str(own[1])+' Speed = '+str(own[2])+"<br>"
+            st+='HP = '+str(own[3])+' Defense = '+str(own[4])+"<br>"
+            result = result + st
+        return result
+
+    except Exception:
+        print traceback.print_exc()
+        return 'Oops something goes wrong!'
+
+@app.route('/searchtrainer')
+def searchtrainer():
+    try:
+        TID = str(request.args.get('TID'))
+        TName = str(request.args.get('TName'))
+        if len(TID) == 0 and len(TName) == 0:
+            return 'Please input PID or PName!'
+        result=''
+        if len(TID) == 0:
+            sexecute = "SELECT T.TID FROM Trainer T WHERE T.TName=\'" + TName + "\'"
+            profiles = g.conn.execute(sexecute)
+            for profile in profiles:
+                TID=str(profile)[1]
+            if not TID:
+                return 'TName not in table!'
+        #profile
+        sexecute = "SELECT T.TID, T.TName, T.Tgender, T.Tregion FROM Trainer T WHERE T.TID=\'" + TID + "\'"
+        profiles = g.conn.execute(sexecute)
+        for s in profiles:
+            if s[1]!=TName and len(TName)!= 0:
+                return 'TID and TName do not match!'
+            TName=s[1]
+            st = 'Trainer ['+TName+"] Profile: <br>TID: "+TID +' Tgender: '+s[2]+' Tregion: '+s[3]+"<br>"
+            result += st
+        result+=" --------------------------------------------- <br>"
+
+        #own relationship
+        sexecute = "SELECT O.PID,O.since,O.episode FROM Own O WHERE O.TID=\'" + TID + "\'"
+        owns = g.conn.execute(sexecute)
+        result = result + "Pokemon Ownership: <br>"
+        for own in owns:
+            st='PID: '+str(own[0])+' Since episode '+str(own[1])+" : "+own[2]+"<br>"
+            result = result + st
+        result+=" --------------------------------------------- <br>"
+
+        #ISA
+        sexecute = "SELECT O.TID,O.hleague FROM hero O WHERE O.TID=\'" + TID + "\'"
+        hh = g.conn.execute(sexecute)
+        v,h=[],[]
+        for i in hh:
+            h=i
+        sexecute = "SELECT O.TID,O.vteam FROM villain O WHERE O.TID=\'" + TID + "\'"
+        vv = g.conn.execute(sexecute)
+        for i in vv:
+            v=i
+        result = result + "ISA: <br>"
+        st=''
+        if not h and not v:
+            st='Neither a hero nor a villain. <br>'
+        elif not v:
+            st='Is a Hero.<br>Belong to league: '+h[1]+"<br>"
+        elif not h:
+            st='Is a Villain.<br>Belong to team: '+v[1]+"<br>"
+        result = result + st
+        result+=" --------------------------------------------- <br>"
+
+        #participate relationship
+        sexecute = "SELECT O.TID,O.BID FROM participate O WHERE O.TID=\'" + TID + "\'"
+        owns = g.conn.execute(sexecute)
+        result = result + "Participate in Battle: <br>"
+        for own in owns:
+            st='Battle ID = '+str(own[1])+"<br>"
+            result = result + st
+        result+=" --------------------------------------------- <br>"
+
+        return result
+    except Exception, e:
+        print traceback.print_exc()
+        return 'Oops something goes wrong!'
+
+@app.route('/searchmove')
+def searchmove():
+    try:
+        MID = str(request.args.get('MID'))
+        MName = str(request.args.get('MName'))
+        result=''
+        if len(MID) == 0 and len(MName) == 0:
+            return 'Please input MID or MName!'
+        if len(MID) == 0:
+            sexecute = "SELECT M.MID FROM move_classify M WHERE M.MName=\'" + MName + "\'"
+            profiles = g.conn.execute(sexecute)
+            for profile in profiles:
+                MID=str(profile)[1]
+            if not MID:
+                return 'MName not in table!'
+        #profile
+        sexecute = "SELECT M.MID, M.MName, M.mdps, M.mpower, M.msecond, M.tyid FROM move_classify M WHERE M.MID=\'" + MID + "\'"
+        profiles = g.conn.execute(sexecute)
+        for s in profiles:
+            if s[1]!=MName and len(MName)!= 0:
+                return 'MID and MName do not match!'
+            st = 'Move ['+s[1]+"] Profile: <br>MID: "+MID +'<br>'+'Damage per second: '+str(s[2])+'<br>'
+            st+='Power: '+str(s[3])+' Second: '+str(s[4])+' Type: '+str(s[5])+'<br>'
+            result +=st
+        return result
+    except Exception:
+        print traceback.print_exc()
+        return 'Oops something goes wrong!'
+
+@app.route('/searchtype')
+def searchtype():
+    try:
+        TyID = str(request.args.get('TyID'))
+        TyName = str(request.args.get('TyName'))
+        result=''
+        if len(TyID) == 0 and len(TyName) == 0:
+            return 'Please input Type ID or Name!'
+        if len(TyID) == 0:
+            sexecute = "SELECT T.TyID FROM type T WHERE T.TyName=\'" + TyName + "\'"
+            profiles = g.conn.execute(sexecute)
+            for profile in profiles:
+                TyID=str(profile)[1]
+            if not TyID:
+                return 'Type Name not in table!'
+        #profile
+        sexecute = "SELECT T.TyID, T.TyName, T.tyweakness, T.tystrength  FROM Type T WHERE T.TyID=\'" + TyID + "\'"
+        profiles = g.conn.execute(sexecute)
+        for s in profiles:
+            if s[1]!=TyName and len(TyName)!= 0:
+                return 'Type ID and Name do not match!'
+            st = 'Type ['+s[1]+"] Profile: <br>Type ID: "+TyID +'<br>'
+            st+='Weakness: '+s[2]+'<br>'+'Strength: '+s[3]
+            result +=st
+        return result
+    except Exception:
+        print traceback.print_exc()
+        return 'Oops something goes wrong!'
+
+@app.route('/searchitem')
+def searchitem():
+    try:
+        IID = str(request.args.get('IID'))
+        IName = str(request.args.get('IName'))
+        result=''
+        if len(IID) == 0 and len(IName) == 0:
+            return 'Please input Item ID or Name!'
+        if len(IID) == 0:
+            sexecute = "SELECT I.IID FROM item I WHERE I.IName=\'" + IName + "\'"
+            profiles = g.conn.execute(sexecute)
+            for profile in profiles:
+                IID=str(profile)[1]
+            if not IID:
+                return 'Item Name not in table!'
+        #profile
+        sexecute = "SELECT I.IID, I.IName, I.itype, I.icost, I.ieffect  FROM item I WHERE I.IID=\'" + IID + "\'"
+        profiles = g.conn.execute(sexecute)
+        for s in profiles:
+            if s[1]!=IName and len(IName)!= 0:
+                return 'Item ID and Name do not match!'
+            IName=s[1]
+            st = 'Item ['+s[1]+"] Profile: <br>Item ID: "+IID +'<br>Type: '+s[2]+'<br>'
+            st+='Cost: '+str(s[3])+'<br>'+'Effect: '+s[4]+'<br>'
+            result +=st
+        result+=" -------------------------------------------------------------------------------- <br>"
+
+        ##Use relationship
+        sexecute = "SELECT I.IID, I.TID, I.PID, I.qty FROM use I WHERE I.IID=\'" + IID + "\'"
+        profiles = g.conn.execute(sexecute)
+        result+='Item ['+IName+'] <br>'
+        for s in profiles:
+            st = 'Used '+str(s[3])+'times by Trainer with TID = '+str(s[1]) +' on Pokemon with PID = '+str(s[2])+'<br>'
+            result +=st
+
+        return result
+    except Exception:
+        print traceback.print_exc()
+        return 'Oops something goes wrong!'
+
+@app.route('/searchbattle')
+def searchbattle():
+    try:
+        BName = str(request.args.get('BName'))
+        result=''
+        if len(BName) == 0:
+            return 'Please input Battle Name!'
+        #profile
+        sexecute = "SELECT I.BName, I.BID, I.tyid FROM Battle_belong I WHERE I.BName=\'" + BName + "\'"
+        profiles = g.conn.execute(sexecute)
+        tmp=[]
+        for s in profiles:
+            tmp=s
+            BID=s[1]
+            result+='Battle ['+BName+"] Profile: <br>BID: "+str(BID) +'<br>Battle Type: '+str(s[2])+'<br>'
+        if not tmp:
+            result='Battle name not in table!'
+        return result
+    except Exception:
+        print traceback.print_exc()
+        return 'Oops something goes wrong!'
+
 ############insert############
 @app.route('/addPokemon', methods=['POST'])
 def addPokemon():
@@ -346,7 +595,27 @@ def addStats():
 	except Exception, e:
 		print traceback.print_exc()
 		return 'False'
-############query############
+############Advanced############
+@app.route('/update', methods=['POST'])
+def update():
+  try:
+    TID = str(request.form['TID'])
+    Field = str(request.form['Field'])
+    New = str(request.form['New'])
+    if len(TID) == 0:
+      return render_template('fancy.html', msgU="You can find your ID in the search page.")
+    if len(Field) == 0 or len(New) == 0:
+      return render_template('fancy.html', msgU="Please tell me what you want to update!")
+    
+    updateQuery = "UPDATE Trainer SET " + Field + " = \'" + New + "\' WHERE TID = " + str(TID)
+    updateResult = g.conn.execute(updateQuery)
+    
+    return render_template('fancy.html', msgU="Successful Update")
+  except Exception, e:
+    print traceback.print_exc()
+    return 'Invalid Input'
+
+
 @app.route('/recommendation', methods=['POST'])
 def recommendation():
   try:

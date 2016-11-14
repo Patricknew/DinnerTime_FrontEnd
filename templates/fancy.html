@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <title>Advanced</title>
     <!-- Bootstrap Core CSS -->
-    <link href="/static/css/bootstrap.min.css" rel="stylesheet">
     <link href="/static/css/bootstrap.css" rel="stylesheet">
 
 </head>
@@ -30,12 +29,36 @@
         <div class="form-group">
             <input class="form-control" type="text" placeholder="Opponent Pokemon" name="PName">
         </div>
-        <button type="submit" class="btn btn-info">Add</button>
+        <button type="submit" class="btn btn-info">Go</button>
     </form>
 
+    <br>
+    <br>
+
+    <label>Trainer Update</label>
+    <form class="form-inline" method="POST" action="/update">
+        <div class="form-group">
+            <input class="form-control" type="text" placeholder="Trainer ID" name="TID">
+            <select name="Field">
+                <option value="TName">Name</option>
+                <option value="TGender">Gender</option>
+                <option value="TRegion">Region</option>
+            </select>
+            <input class="form-control" type="text" placeholder="New Info" name="New">
+        </div>
+        <button type="submit" class="btn btn-info">Update</button>
+    </form>
+
+    <br>
+    <br>
+    
     {% if msg %}
       <h4>You should choose from the following: </h4>
       <h4>{{ msg }}</h4>
+    {% endif %}
+
+    {% if msgU %}
+        <h4>{{ msgU }}</h4>
     {% endif %}
 </div>
 
