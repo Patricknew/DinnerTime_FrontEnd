@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Insert</title>
+    <!-- Bootstrap Core CSS -->
+    <link href="http://getbootstrap.com/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src='/static/js/bootstrap.min.js'></script>
+
+</head>
+<body style="width:100%; background:url('/static/img/y.jpg');background-size: cover;">
+
+<div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+	<div class="container">
+		<div class="navbar-header">
+			<a href="/" class="navbar-brand">Home</a>
+		</div>
+		<div class="collapse navbar-collapse">
+			<ul class="nav navbar-nav navbar-right">
+                <a href="/query" class="navbar-brand">Basic</a>
+                <a href="/fancy" class="navbar-brand">Advanced</a>
+			</ul>
+		</div>
+	</div>
+</div>
+
+<div class="container">
+    <h2>Insert new ...</h2>
+    <label>Insert New Pokemon</label>
+    <form class="form-inline" method="POST" action="/addPokemon">
+        <div class="form-group">
+            <input class="form-control" id="exampleInputEmail1" type="text" placeholder="ID" name="PID">
+            <input class="form-control" id="exampleInputEmail1" placeholder="Name" name="PName">
+            <input class="form-control" id="exampleInputEmail1" placeholder="Evolution Level" name="PEvolutionLvl">
+        </div>
+        <button type="submit" class="btn btn-info">Add</button>
+    </form>
+
+    <label>Insert New Trainer</label>
+    <form class="form-inline" method="POST" action="/addTrainer">
+        <div class="form-group">
+            <input class="form-control" id="exampleInputEmail1" placeholder="ID" name="TID">
+            <input class="form-control" id="exampleInputEmail1" placeholder="Name" name="TName">
+            <input class="form-control" id="exampleInputEmail1" placeholder="Gender" name="TGender">
+            <input class="form-control" id="exampleInputEmail1" placeholder="Region" name="TRegion">
+        </div>
+        <button type="submit" class="btn btn-info">Add</button>
+    </form>
+
+    <label>Insert New Type</label>
+    <form class="form-inline" method="POST" action="/addType">
+        <div class="form-group">
+            <input class="form-control" id="exampleInputEmail1" placeholder="ID" name="TyID">
+            <input class="form-control" id="exampleInputEmail1" placeholder="Name" name="TyName">
+            <input class="form-control" id="exampleInputEmail1" placeholder="Weakness" name="TyWeakness">
+            <input class="form-control" id="exampleInputEmail1" placeholder="Strength" name="TyStrength">
+        </div>
+        <button type="submit" class="btn btn-info">Add</button>
+    </form>
+
+    <label>Insert New Battle</label>
+    <form class="form-inline" method="POST" action="/addBattle">
+        <div class="form-group">
+            <input class="form-control" id="exampleInputEmail1" placeholder="ID" name="BID">
+            <input class="form-control" id="exampleInputEmail1" placeholder="Gym Name" name="BName">
+            <input class="form-control" id="exampleInputEmail1" placeholder="Gym Leader Type" name="TyID">
+        </div>
+        <button type="submit" class="btn btn-info">Add</button>
+    </form>
+
+    <label>Insert New Item</label>
+    <form class="form-inline" method="POST" action="/addItem">
+        <div class="form-group">
+            <input class="form-control" id="exampleInputEmail1" placeholder="ID" name="IID">
+            <input class="form-control" id="exampleInputEmail1" placeholder="Name" name="IName">
+            <input class="form-control" id="exampleInputEmail1" placeholder="Type" name="IType">
+            <input class="form-control" id="exampleInputEmail1" placeholder="Cost" name="ICost">
+            <input class="form-control" id="exampleInputEmail1" placeholder="Effect" name="IEffect">
+        </div>
+        <button type="submit" class="btn btn-info">Add</button>
+    </form>
+
+    <label>Insert New Move</label>
+    <form class="form-inline" method="POST" action="/addMove">
+        <div class="form-group">
+            <input class="form-control" id="exampleInputEmail1" placeholder="ID" name="MID">
+            <input class="form-control" id="exampleInputEmail1" placeholder="Name" name="MName">
+            <input class="form-control" id="exampleInputEmail1" placeholder="Damage Per Sec" name="MDps">
+            <input class="form-control" id="exampleInputEmail1" placeholder="Power" name="MPower">
+            <input class="form-control" id="exampleInputEmail1" placeholder="Seconds" name="MSecond">
+            <input class="form-control" id="exampleInputEmail1" placeholder="Type" name="TyID">
+        </div>
+        <button type="submit" class="btn btn-info">Add</button>
+    </form>
+
+    <label>Insert New Stats</label>
+    <form class="form-inline" method="POST" action="/addStats">
+        <div class="form-group">
+            <input class="form-control" id="exampleInputEmail1" placeholder="Pokemon ID" name="PID">
+            <input class="form-control" id="exampleInputEmail1" placeholder="HP" name="SHP">
+            <input class="form-control" id="exampleInputEmail1" placeholder="Attack" name="SAttack">
+            <input class="form-control" id="exampleInputEmail1" placeholder="Defense" name="SDefense">
+            <input class="form-control" id="exampleInputEmail1" placeholder="Speed" name="SSpeed">
+        </div>
+        <button type="submit" class="btn btn-info">Add</button>
+    </form>
+
+    {% if msg %}
+      <h1>{{ msg }}!</h1>
+    {% endif %}
+</div>
+
+
+</body>
+</html>
