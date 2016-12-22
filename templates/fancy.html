@@ -5,6 +5,39 @@
     <title>Advanced</title>
     <!-- Bootstrap Core CSS -->
     <link href="/static/css/bootstrap.css" rel="stylesheet">
+    <style type="text/css">
+        #title {
+            color: white;
+            background-color: #222222;
+            text-align: center;
+            margin: auto;
+            width: 25%;
+            border: 3px solid black;
+            padding: 10px;
+        }
+        .center{
+            text-align: center;
+            margin: auto;
+            display: block;
+            /*width: 25%;*/
+            /*border: 3px solid;*/
+            padding: 10px;
+        }
+        .form-inline{
+            text-align: center;
+            margin: auto;
+            display: block;
+            /*width: 25%;*/
+            /*border: 3px solid;*/
+            padding: 10px;
+        }
+        #logo {
+            display: block;
+            position: absolute;
+            bottom: 0px;
+            right: 0px;
+        }
+    </style>
 
 </head>
 <body style="width:100%; background:url('/static/img/y.jpg');background-size: cover;">
@@ -16,49 +49,40 @@
 		</div>
 		<div class="collapse navbar-collapse">
 			<ul class="nav navbar-nav navbar-right">
-                <a href="/query" class="navbar-brand">Basic</a>
-                <a href="/insert" class="navbar-brand">Insert</a>
+                <a href="/basic" class="navbar-brand">Basic</a>
 			</ul>
 		</div>
 	</div>
 </section>
 
 <div class="container">
-    <label>Pokemon Recommendation</label>
-    <form class="form-inline" method="POST" action="/recommendation">
+    <img id="logo" src="/static/img/white.png" alt="DinnerTime Logo" />
+    <h2 id="title">Send us your reviews</h2>
+</br>
+</br>
+
+    <form class="form-inline" action="/add" method="POST" enctype = "multipart/form-data" id="form">
         <div class="form-group">
-            <input class="form-control" type="text" placeholder="Opponent Pokemon" name="PName">
+            <input class="form-control" type="file" name="file" accept="image/*" id="file">  
+            <input class="form-control" type="text" placeholder="Please write your reviews" name="reviews">
         </div>
-        <button type="submit" class="btn btn-info">Go</button>
+        <button type="submit" class="btn btn-info">Add</button>
     </form>
 
-    <br>
-    <br>
-
-    <label>Trainer Update</label>
-    <form class="form-inline" method="POST" action="/update">
-        <div class="form-group">
-            <input class="form-control" type="text" placeholder="Trainer ID" name="TID">
-            <select name="Field">
-                <option value="TName">Name</option>
-                <option value="TGender">Gender</option>
-                <option value="TRegion">Region</option>
-            </select>
-            <input class="form-control" type="text" placeholder="New Info" name="New">
-        </div>
-        <button type="submit" class="btn btn-info">Update</button>
-    </form>
 
     <br>
+
     <br>
-    
-    {% if msg %}
-      <h4>You should choose from the following: </h4>
-      <h4>{{ msg }}</h4>
-    {% endif %}
 
     {% if msgU %}
-        <h4>{{ msgU }}</h4>
+        <h4 id="msg">{{ msgU }}</h4>
+        <script type="text/javascript">
+        var temp = '{{ msgU }}';
+        function myFunction(temp) {
+            document.getElementById("msg").innerHTML = temp;
+        }
+        console.log(temp);
+      </script>
     {% endif %}
 </div>
 
